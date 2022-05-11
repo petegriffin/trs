@@ -1,0 +1,23 @@
+:orphan:
+
+.. _ft-003:
+
+UEFI Capsule Update APIs Support
+################################
+
+Supported devices: :ref:`RockPi4`., ...
+
+Description
+***********
+
+How to build
+************
+
+How to run
+**********
+
+How to run test cases
+*********************
+
+Where is our CI and regression results
+**************************************

@@ -1,0 +1,23 @@
+:orphan:
+
+.. _ft-002:
+
+UEFI Capsules: integration of application level update agents to receive UEFI Capsules
+######################################################################################
+
+Supported devices: :ref:`RockPi4`., ...
+
+Description
+***********
+
+How to build
+************
+
+How to run
+**********
+
+How to run test cases
+*********************
+
+Where is our CI and regression results
+**************************************

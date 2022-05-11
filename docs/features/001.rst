@@ -1,0 +1,29 @@
+:orphan:
+
+.. _ft-001:
+
+Secure boot covering the verification of non-secure world software
+##################################################################
+
+Supported devices: :ref:`RockPi4`., ...
+
+Description
+***********
+
+How to build
+************
+
+..
+  [NEEDS_TO_BE_FIXED] - Just fictionary example here
+
+This feature is fully supported when building according to the instructions at 
+
+
+How to run
+**********
+
+How to run test cases
+*********************
+
+Where is our CI and regression results
+**************************************
