@@ -2,25 +2,33 @@
 
 .. _ft-001:
 
-Secure boot covering the verification of non-secure world software
-##################################################################
+UEFI Secure boot covering the verification of non-secure world software
+#######################################################################
 
-Supported devices: :ref:`RockPi4`., ...
+See the list of `supported devices
+<https://trusted-substrate.readthedocs.io/en/latest/hardware/supported_platforms.html>`_
 
 Description
 ***********
 
+UEFI Secure Boot is a verification mechanism for ensuring that code launched by
+a computer’s UEFI firmware is trusted. It is designed to protect a system
+against malicious code being loaded and executed early in the boot process,
+before the operating system has been loaded.
+
 How to build
 ************
 
-..
-  [NEEDS_TO_BE_FIXED] - Just fictionary example here
-
-This feature is fully supported when building according to the instructions at 
-
+UEFI Secure Boot is part of the Trusted Substrate featureset.  It's enabled by
+default on all supported platforms.  You can find detailed instructions in
+`Trusted Substrate <https://trusted-substrate.readthedocs.io/en/latest/building/build_source.html#building-from-source>`_
 
 How to run
 **********
+
+UEFI Secure Boot is part of the firmware implementation.  You can find
+instructions on it's usage and enablement `here
+<https://trusted-substrate.readthedocs.io/en/latest/running/uefi_variables.html#enable-secure-boot>`_
 
 How to run test cases
 *********************
