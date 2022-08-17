@@ -3,38 +3,41 @@
 Prerequisites
 #############
 
-Ubuntu / Debian
-***************
-Install the necessary packages using apt-get.
 
-..
-  [NEEDS_TO_BE_FIXED] - Add correct pre-req packages
+.. tabs::
 
-.. code-block:: bash
+    .. tab:: Ubuntu / Debian
 
-	$ sudo apt update
-	$ sudo apt install git
+        Install the necessary packages using apt-get.
 
-Arch Linux
-**********
-Install the necessary packages using pacman.
+        ..
+          [NEEDS_TO_BE_FIXED] - Add correct pre-req packages
 
-..
-  [NEEDS_TO_BE_FIXED] - Add correct pre-req packages
+        .. code-block:: bash
 
-.. code-block:: bash
+            $ sudo apt update
+            $ sudo apt install git
 
-	$ sudo pacman -Syy
-	$ sudo pacman -S git
+    .. tab:: Arch Linux
 
-Fedora
-******
-Install the necessary packages using dnf.
+        Install the necessary packages using pacman.
 
-..
-  [NEEDS_TO_BE_FIXED] - Add correct pre-req packages
+        ..
+          [NEEDS_TO_BE_FIXED] - Add correct pre-req packages
 
-.. code-block:: bash
+        .. code-block:: bash
 
-	$ sudo dnf update
-	$ sudo dnf install git
+            $ sudo pacman -Syy
+            $ sudo pacman -S git
+
+    .. tab:: Fedora
+
+        Install the necessary packages using dnf.
+
+        ..
+          [NEEDS_TO_BE_FIXED] - Add correct pre-req packages
+
+        .. code-block:: bash
+
+            $ sudo dnf update
+            $ sudo dnf install git
