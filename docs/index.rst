@@ -27,6 +27,7 @@ The main documentation for the site is organized into a couple sections:
 	install/install
 	install/rockpi4
 	install/qemu
+	install/recipes
 
 
 .. _feature-docs:
