@@ -3,53 +3,56 @@
 RockPi4
 #######
 
-LEDGE Reference Platform (ledge-os-manifest) is a Linux distro based on
-Yocto/OpenEmbedded. It also uses firmware from Linaro :ref:`Trusted Substrate`
-(meta-ts). This document describes how to build and run for target RockPi4.
+This document describes how to build and run for RockPi4b+ target.
 
 Building
 ********
 
 Build meta-ts
 =============
+
+Refer to the trusted substrate docs for more information
+https://trusted-substrate.readthedocs.io/en/latest/
+
 .. code-block:: bash
 
 	$ pip install kas
-	$ git clone https://git.codelinaro.org/linaro/dependable-boot/meta-ts.git
+	$ git clone https://gitlab.com/Linaro/trustedsubstrate/meta-ts.git
 	$ cd meta-ts
 	$ kas build ci/rockpi4b.yml
 
-Build ledge-oe or download prebuilt rootfs image
+Build ewaol plus ledge security rootfs image
 ================================================
 .. code-block:: bash
 
-	$ mkdir ledge-oe
-	$ cd ledge-oe
-	$ repo init -u https://github.com/Linaro/ledge-oe-manifest.git
-	$ repo sync -j20
-	$ MACHINE=ledge-multi-armv8 DISTRO=rpb source ./setup-environment build-rpb-mc
-	# (changes dir to build-rpb-mc automatically)
+	$ mkdir trs
+	$ cd trs
+	$ git clone https://gitlab.com/Linaro/ewaol/meta-ewaol-machine.git -b kirkstone-dev
+	$ cd meta-ewaol-machine
+	$ ./build.sh ledge-secure-qemuarm64 baremetal
+
 	# Note: the rootfs is common with other arm64 targets, so the same .wic image can be used
-	# e.g. on RockPi4 too (name is legacy)
-	$ bitbake mc:qemuarm64:ledge-gateway
 
 Run
 ***
-How to prepare the images to run on the RockPi 4 board is explained here, copied/annotated below:
+How to prepare the images to run on the RockPi 4 board is explained here,
+copied/annotated below:
 
-“Firmware boots from an SD card. While rootfs and ESP partition are on a USB stick.
+Firmware boots from an SD card. While rootfs and ESP partition are on a USB
+stick. This allows the USB stick to be easily used in multiple boards.
 
 Prepare SD with
 ===============
 
-..
-	[NEEDS_TO_BE_FIXED] - Currently describeds Jeromes way of setting this up
+Refer to trusted substrate docs for more information
+https://trusted-substrate.readthedocs.io/en/latest/building/install_firmware.html
+
+Assuming your SD card is /dev/sda
 
 .. code-block:: bash
 
-	$ scp jerome.forissier@hackbox2.linaro.org:meta-ts/build/tmp/deploy/images/rockpi4b/ts-firmware-rockpi4b.wic.gz .
-	zcat ts-firmware-rockpi4b.wic.gz >/dev/sdX
-	# (on my laptop it’s >/dev/mmcblk0)
+	$ cp meta-ts/build/tmp/deploy/images/rockpi4b/ts-firmware-rockpi4b.wic.gz .
+	$ zcat ts-firmware-rockpi4b.wic.gz >/dev/sda
 
 .. warning::
 
@@ -60,24 +63,12 @@ Prepare SD with
 Prepare USB stick with
 ======================
 
-..
-	[NEEDS_TO_BE_FIXED] - Currently describeds Jeromes way of setting this up and mentions LEDGE RP
-
-You can use LEDGE RP for example:
+To flash the rootfs image you built above, from your trs build directory
 
 .. code-block:: bash
 
-	$ wget https://snapshots.linaro.org/components/ledge/oe/ledge-multi-armv8/1322/rpb/ledge-qemuarm64/ledge-gateway-lava-ledge-qemuarm64-20220413003518.rootfs.wic.gz .
-
-Or custom built:
-
-..
-	[NEEDS_TO_BE_FIXED] - Currently describeds Jeromes way of setting this up
-
-.. code-block:: bash
-
-	$ scp jerome.forissier@hackbox2.linaro.org:ledge-oe/build-rpb-mc/arm64-glibc/deploy/images/ledge-qemuarm64/ledge-gateway-ledge-qemuarm64.wic.gz .
-	$ zcat <rootfs>.wic.gz > /dev/sdY
+	$ sudo dd if=build/ledge-secure-qemuarm64/tmp_baremetal/deploy/images/ledge-secure-qemuarm64/ewaol-baremetal-image-ledge-secure-qemuarm64.wic of=/dev/sda bs=1M status=progress
+	$ sync
 
 .. note::
 
@@ -92,7 +83,6 @@ Plug both USB stick and SD card into the board. The USB stick has to be in one
 of the black USB ports (at least for me it wouldn’t be detected by U-Boot when
 in one of the blue USB3 ports; I’m using a CF card in a USB adapter). Power it
 on and wait for the U-boot prompt.
-
 Add kernel board specific kernel parameters and EFI boot order
 ==============================================================
 
@@ -107,8 +97,8 @@ Restart
 Power cycle board it and it has to boot automatically now.
 
 .. note::
-	First boot with a fresh root fs is slow, please wait for a couple of minutes
-	(really) when no output is shown:
+	Second boot with a fresh root fs is quite slow, please wait for a couple
+	of minutes. This is caused by the rootfs being encrypted on first boot.
 
 Serial port info: https://wiki.radxa.com/Rockpi4/dev/serial-console. We've been
 using this script:
@@ -175,36 +165,11 @@ The default toolchains (``aarch64-linux-gnu-*``) is too old (7.2). Put a more
 recent one in your ``PATH`` before invoking ``symbolize.py`` (Note: some source/file
 line info are still missing, could be due to build flags)
 
-Q: How can I modify, rebuild and test the kernel?
-=================================================
-Edit source in
+Q: My board randomly hangs or crashes under system load. Why?
+=====================================================================
+RockPi4b boards are very fussy about their PSU. Ensure you are using an official
+PSU like
+https://shop.allnetchina.cn/products/power-supply-adapter-qc-3-0-for-rock-pi-4
 
-.. code-block:: bash
-
-	build-rpb-mc/arm64-glibc/work/ledge_qemuarm64-linaro-linux/linux-ledge/mainline-5.15-r4.ledge/linux-5.15.34/
-
-and then build with:
-
-.. code-block:: bash
-
-	$ MACHINE=ledge-multi-armv8 DISTRO=rpb source ./setup-environment build-rpb-mc
-	$ bitbake -f -c compile mc:qemuarm64:linux-ledge
-
-Then transfer the file
-
-.. code-block:: bash
-
-	build-rpb-mc/arm64-glibc/work/ledge_qemuarm64-linaro-linux/linux-ledge/mainline-5.15-r4.ledge/build/arch/arm64/boot/Image
-
-to the USB stick partition 1 with name: ``EFI/BOOT/bootaa64.efi``.
-
-Q: How can I modify and regenerate the initramfs?
-=================================================
-
-.. code-block:: bash
-
-	bitbake mc:qemuarm64:ledge-initramfs
-
-then copy ``ledge-initramfs.rootfs.cpio.gz`` to partition 1 of the USB stick
-
-
+Do not use a 5v only USB-C PSU (such as a USB port on your laptop), as you will
+hit random board stability issues.
